@@ -2,7 +2,7 @@ import json
 import urllib2
 
 from constants import *
-from iofog_container_sdk.exception import IoFogHttpException
+from exception import HALException
 
 
 class RESTClient:
@@ -38,8 +38,6 @@ class RESTClient:
             response = urllib2.urlopen(req)
             return json.loads(response.read())
         except urllib2.HTTPError as http_e:
-            print('HTTP Error: {}'.format(http_e))
-            raise IoFogHttpException(http_e.code, http_e.read())
+            raise HALException(http_e.code, http_e.read())
         except Exception as e:
-            print('Error: {}'.format(e))
-            raise IoFogHttpException(e.code, e.read())
+            raise HALException(message=str(e))

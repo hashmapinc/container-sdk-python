@@ -2,6 +2,7 @@ import threading
 import json
 from struct import pack
 from ws4py.client.threadedclient import WebSocketClient
+from exception import HALException
 from constants import *
 
 
@@ -20,7 +21,7 @@ class WSClient(WebSocketClient):
         self._send_open_connection()
 
     def closed(self, code, reason=None):
-        print "Closed down", code, reason
+        print('Closed down code = {} and reason = {}'.fomat(code, reason))
         if code == HAL_WS_CLOSE_FRAME_STATUS_EXCEPTION:
             self.close(code=HAL_WS_CLOSE_FRAME_STATUS_NORMAL, reason='Client closed successfully.')
         self.worker = None
@@ -46,8 +47,8 @@ class WSClient(WebSocketClient):
         print('Starting serving on ws')
         try:
             super(WSClient, self).connect()
-        except Exception, e:
-            print('Error connecting to socket: {}'.format(e))
+        except Exception as e:
+            raise HALException(message=str(e))
         self.run_forever()
         # print('Loop exited')
 
@@ -79,8 +80,6 @@ class WSClient(WebSocketClient):
         return
 
     def send_close_frame(self):
-        # TODO: check if conn open and close it with code and reason
-        # Maybe standard function will be enough
         self.is_opened = False
         self.worker = None
         self.close(code=1000, reason='Client wants to close connection to device.')
