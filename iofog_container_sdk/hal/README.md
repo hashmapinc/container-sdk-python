@@ -30,7 +30,7 @@ try:
     lshw_info = hal_client.get_lshw_info()
     proc_pu_info = hal_client.get_proc_cpu_info()
 except HALException as e:
-    # some error occurred, e contains description : e.code and e.reason
+    # some error occurred, e contains description : e.code and e.message
 ```
 #### WebSocket API
 
@@ -46,15 +46,16 @@ class HALUSBtoSerialHandler(HALWSHandler):
 
     def connection_opened(self):
         print(' -- WS -- Connection Opened') 
-        # this method is triggered after connection was established and signal to open connection with provided 
-        # configuration to open connection was sent correctly 
+        # this method is triggered after connection was established and signal to open connection 
+        # with provided configuration to open connection was executed correctly on both sides of 
+        # connection
         return
 
     def got_data(self, data):
         print(' -- WS -- Received data HAL: {}'.format(data))
 ```
 
-Establish connection to USB-to-Serial devicem don't forget to provide config, where PORT property is required, and handler:
+Establish connection to USB-to-Serial device. Don't forget to provide config, where PORT property is required, and handler:
 ```python
 handler = HALUSBtoSerialHandler()
 config = {HAL_USB_TO_SERIAL_PORT_PROPERTY_NAME: '/dev/ttyUSB0'}
@@ -62,7 +63,7 @@ try:
     usb_to_serial_client = hal_client.connect_to_usb_to_serial(config, handler)
     # continue working with socket connection
 except HALException as e:
-    # some error occurred, e contains description : e.code & e.message
+    # some error occurred, e contains description : e.code and e.message
 ```
 Each of those connections will be managed in a separate thread.
   
