@@ -21,7 +21,7 @@ class WSClient(WebSocketClient):
         self._send_open_connection()
 
     def closed(self, code, reason=None):
-        print('Closed down code = {} and reason = {}'.fomat(code, reason))
+        print('Closed down code = {} and reason = {}'.format(code, reason))
         if code == HAL_WS_CLOSE_FRAME_STATUS_EXCEPTION:
             self.close(code=HAL_WS_CLOSE_FRAME_STATUS_NORMAL, reason='Client closed successfully.')
         self.worker = None
@@ -32,7 +32,6 @@ class WSClient(WebSocketClient):
         config_package = bytearray()
         config_package.extend(json.dumps(self.config))
         package = bytearray([HAL_WS_OPEN_CONNECTION_OPCODE])
-        package.extend(pack('>I', len(config_package)))
         package += config_package
         self.send(package, binary=True)
         return
@@ -63,7 +62,7 @@ class WSClient(WebSocketClient):
                         self.is_opened = True
                         self.handler.connection_opened()
                     elif opcode == HAL_WS_GOT_DATA_OPCODE:
-                        self.handler.got_data(data[5:])
+                        self.handler.got_data(data[1:])
                 else:
                     print('Message is not binary:' + str(message.data))
             else:
@@ -73,7 +72,6 @@ class WSClient(WebSocketClient):
 
     def send_data(self, data):
         package = bytearray([HAL_WS_SEND_DATA_OPCODE])
-        package.extend(pack('>I', len(data)))
         package += data
         print('Sending data: {}'.format(package))
         self.send(package, binary=True)
